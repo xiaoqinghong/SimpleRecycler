@@ -1,0 +1,2 @@
+# SimpleRecyler
+SimpleRecyclerAdapter &amp; SimpleViewHolder
