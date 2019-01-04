@@ -1,4 +1,4 @@
-package com.eric.simplerecyler;
+package com.eric.simple;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,11 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
-import com.eric.simplerecyler.adapter.TestAdapter;
-import com.eric.simplerecyler.component.SimpleRecyclerAdapter;
+import com.eric.simple.adapter.TestAdapter;
+import com.eric.simple.component.SimpleRecyclerAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView rvMain;

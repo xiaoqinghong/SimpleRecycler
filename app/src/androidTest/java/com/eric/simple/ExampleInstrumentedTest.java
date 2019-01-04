@@ -1,4 +1,4 @@
-package com.eric.simplerecyler;
+package com.eric.simple;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

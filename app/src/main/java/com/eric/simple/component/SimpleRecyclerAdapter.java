@@ -1,4 +1,4 @@
-package com.eric.simplerecyler.component;
+package com.eric.simple.component;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
