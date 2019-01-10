@@ -12,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 final public class SimpleViewHolder extends RecyclerView.ViewHolder {
-    static final int ITEM_POSITION_KEY = -1000;
-    static final int ITEM_IS_ITEM_KEY = -1001;
+    static final int KEY_TEM_POSITION = -1000;
+    static final int KEY_IS_ITEM = -1001;
 
     private SimpleRecyclerAdapter.OnItemClickListener onItemClickListener;
     private SimpleRecyclerAdapter.OnItemLongClickListener onItemLongClickListener;
@@ -83,8 +83,8 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
     private class InnerClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Integer position = (Integer) v.getTag(ITEM_POSITION_KEY);
-            Boolean isItemView = (Boolean)v.getTag(ITEM_IS_ITEM_KEY);
+            Integer position = (Integer) v.getTag(KEY_TEM_POSITION);
+            Boolean isItemView = (Boolean)v.getTag(KEY_IS_ITEM);
             if (position != null && isItemView != null) {
                 if (isItemView) {
                     if (onItemClickListener!= null)
@@ -103,8 +103,8 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
     private class InnerLongClickListener implements View.OnLongClickListener {
         @Override
         public boolean onLongClick(View v) {
-            Integer position = (Integer) v.getTag(ITEM_POSITION_KEY);
-            Boolean isItemView = (Boolean)v.getTag(ITEM_IS_ITEM_KEY);
+            Integer position = (Integer) v.getTag(KEY_TEM_POSITION);
+            Boolean isItemView = (Boolean)v.getTag(KEY_IS_ITEM);
             if (position != null && isItemView != null) {
                 if (isItemView) {
                     if (onItemLongClickListener!= null)
@@ -132,11 +132,8 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
                 mInnerClickListener = new InnerClickListener();
             }
             View subView = itemView.findViewById(id);
-            Boolean isItemView = (Boolean) subView.getTag(ITEM_IS_ITEM_KEY);
-            if (isItemView == null) {
-                subView.setTag(ITEM_POSITION_KEY, itemView.getTag(ITEM_POSITION_KEY));
-                subView.setTag(ITEM_IS_ITEM_KEY, false);
-            }
+            subView.setTag(KEY_TEM_POSITION, itemView.getTag(KEY_TEM_POSITION));
+            subView.setTag(KEY_IS_ITEM, false);
             subView.setOnClickListener(mInnerClickListener);
         }
         return this;
@@ -154,11 +151,8 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
                 mInnerLongClickListener = new InnerLongClickListener();
             }
             View subView = itemView.findViewById(id);
-            Boolean isItemView = (Boolean) subView.getTag(ITEM_IS_ITEM_KEY);
-            if (isItemView == null) {
-                subView.setTag(ITEM_POSITION_KEY, itemView.getTag(ITEM_POSITION_KEY));
-                subView.setTag(ITEM_IS_ITEM_KEY, false);
-            }
+            subView.setTag(KEY_TEM_POSITION, itemView.getTag(KEY_TEM_POSITION));
+            subView.setTag(KEY_IS_ITEM, false);
             subView.setOnLongClickListener(mInnerLongClickListener);
         }
         return this;

@@ -3,6 +3,7 @@ package com.eric.simple.component;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,19 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
 
     private List<T> mData;
     private int mLayoutId;
+    private View mHeaderView;
+    private View mFooterView;
     private RecyclerView mRecyclerView;
     private Context context;
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
     private OnSubViewClickListener onSubViewClickListener;
     private OnSubViewLongClickListener onSubViewLongClickListener;
+
+    //Type
+    private static int TYPE_NORMAL = 1000;
+    private static int TYPE_HEADER = 1001;
+    private static int TYPE_FOOTER = 1002;
 
     public SimpleRecyclerAdapter(int layout, List<T> list) {
         this.mLayoutId = layout;
@@ -27,10 +35,18 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
 
     @NonNull
     @Override
-    public SimpleViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public SimpleViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         context = viewGroup.getContext();
-        View itemView = LayoutInflater.from(context).inflate(mLayoutId, viewGroup, false);
-        SimpleViewHolder simpleViewHolder = new SimpleViewHolder(itemView);
+        View itemView;
+        SimpleViewHolder simpleViewHolder;
+        if (viewType == TYPE_HEADER) {
+            itemView = mHeaderView;
+        } else if (viewType == TYPE_FOOTER) {
+            itemView = mFooterView;
+        } else {
+            itemView = LayoutInflater.from(context).inflate(mLayoutId, viewGroup, false);
+        }
+        simpleViewHolder = new SimpleViewHolder(itemView);
         simpleViewHolder.bindItemClickListener(onItemClickListener);
         simpleViewHolder.bindSubViewClickListener(onSubViewClickListener);
         simpleViewHolder.bindItemLongClickListener(onItemLongClickListener);
@@ -39,16 +55,48 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SimpleViewHolder simpleViewHolder, int i) {
-        simpleViewHolder.itemView.setTag(SimpleViewHolder.ITEM_POSITION_KEY, i);
-        simpleViewHolder.itemView.setTag(SimpleViewHolder.ITEM_IS_ITEM_KEY, true);
-        bindData(simpleViewHolder, mData.get(i));
+    public void onBindViewHolder(@NonNull SimpleViewHolder simpleViewHolder, int position) {
+        if (!isHeader(position) && !isFooter(position)){
+            if (haveHeader()) position --;
+            simpleViewHolder.itemView.setTag(SimpleViewHolder.KEY_TEM_POSITION, position);
+            simpleViewHolder.itemView.setTag(SimpleViewHolder.KEY_IS_ITEM, true);
+            bindData(simpleViewHolder, mData.get(position));
+        }
     }
 
     @Override
     public int getItemCount() {
-        if (mData != null) return mData.size();
-        else return 0;
+        int count = mData != null? mData.size() : 0;
+        if (mHeaderView != null) count ++;
+        if (mFooterView != null) count ++;
+        return count;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (isHeader(position)) {
+            return TYPE_HEADER;
+        }
+        if (isFooter(position)) {
+            return TYPE_FOOTER;
+        }
+        return TYPE_NORMAL;
+    }
+
+    private boolean haveHeader() {
+        return mHeaderView != null;
+    }
+
+    private boolean haveFooter() {
+        return mFooterView != null;
+    }
+
+    private boolean isHeader(int position) {
+        return haveHeader() && position == 0;
+    }
+
+    private boolean isFooter(int position) {
+        return haveFooter() && position == getItemCount() - 1;
     }
 
     /**
@@ -72,9 +120,44 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
     }
 
     /**
+     * 绑定RecyclerView
+     * RecyclerView绑定layoutManager
+     */
+    public void bindRecyclerView(RecyclerView recyclerView, RecyclerView.LayoutManager layoutManager){
+        this.mRecyclerView = recyclerView;
+        this.mRecyclerView.setLayoutManager(layoutManager);
+    }
+
+    /**
+     * 给整个列表添加header
+     */
+    public void addHeaderView(View view) {
+        if (this.mHeaderView != null) return;
+        // 避免出现宽度自适应
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        this.mHeaderView = view;
+        mHeaderView.setLayoutParams(params);
+
+    }
+
+    /**
+     * 给整个列表添加footer
+     */
+    public void addFooterView(View view) {
+        if (this.mFooterView != null) return;
+        // 避免出现宽度自适应
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        this.mFooterView = view;
+        mFooterView.setLayoutParams(params);
+    }
+
+    //================以下是属性设置======================//
+
+    /**
      * 设置item的点击事件监听
      */
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        if (this.onItemClickListener != null) return;
         this.onItemClickListener = onItemClickListener;
     }
 
@@ -82,6 +165,7 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
      * 设置item的长按事件监听
      */
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+        if (this.onItemLongClickListener != null) return;
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
@@ -89,6 +173,7 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
      * 设置subView 的点击事件监听
      */
     public void setOnSubViewClickListener(OnSubViewClickListener onSubViewClickListener) {
+        if (this.onSubViewClickListener != null) return;
         this.onSubViewClickListener = onSubViewClickListener;
     }
 
@@ -96,6 +181,7 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
      * 设置subView 的长按事件监听
      */
     public void setOnSubViewLongClickListener(OnSubViewLongClickListener onSubViewLongClickListener) {
+        if (this.onSubViewLongClickListener != null) return;
         this.onSubViewLongClickListener = onSubViewLongClickListener;
     }
 

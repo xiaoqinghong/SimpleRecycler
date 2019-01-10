@@ -9,4 +9,5 @@
 .DS_Store
 /build
 /captures
+/key
 .externalNativeBuild

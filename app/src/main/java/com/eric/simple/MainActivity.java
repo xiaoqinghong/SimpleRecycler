@@ -31,6 +31,10 @@ public class MainActivity extends AppCompatActivity {
         rvMain.setLayoutManager(new LinearLayoutManager(this));
         testAdapter = new TestAdapter(list);
         testAdapter.bindRecyclerView(rvMain);
+        View header = View.inflate(this, R.layout.header_test, null);
+        View footer = View.inflate(this, R.layout.footer_test, null);
+        testAdapter.addHeaderView(header);
+        testAdapter.addFooterView(footer);
     }
 
     private void initEvent() {
@@ -51,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadData() {
         for (int i = 0; i < 20; i++) {
-            list.add("文字是sub item "+i);
+            list.add("点击文字是sub item "+i);
         }
         testAdapter.notifyDataSetChanged();
     }

@@ -45,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
         testAdapter = new TestAdapter(list);
         // 绑定RecyclerView
         testAdapter.bindRecyclerView(rvMain);
+        // 20190110更新：Adapter支持添加header和footer
+        View header = View.inflate(this, R.layout.header_test, null);
+        View footer = View.inflate(this, R.layout.footer_test, null);
+        testAdapter.addHeaderView(header);
+        testAdapter.addFooterView(footer);
     }
 
     private void initEvent() {
