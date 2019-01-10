@@ -1,4 +1,5 @@
 # SimpleRecycler
+apk：https://github.com/xiaoqinghong/SimpleRecycler/raw/master/app/release/app-release.apk  
 ### step：
 1. 在工程目录的```com.eric.simple.component```下找到SimpleRecyclerAdapter &amp; SimpleViewHolder；
 2. 把这两个文件放到自己的工程中（放到哪个位置自定义）；
