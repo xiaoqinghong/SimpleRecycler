@@ -6,7 +6,7 @@ apk：https://github.com/xiaoqinghong/SimpleRecycler/raw/master/app/release/app-
 3. RecyclerView的adapter继承```SimpleRecyclerAdapter<T>```并在泛型处传入数据类；
 4. 仅在bindData中使用helper来操作每一个item；  
 ps. 这里的helper是一个链式调用。helper即是SimpleViewHolder。当前这个demo中只封装了一些常用的方法。
-比如：设置可见性、设置文字、设置文字颜色、设置图片、点击、长按、通过id获取view等。若需要别的方法，可自行添加。
+比如：设置可见性、设置文字、设置文字颜色、设置图片、点击、长按、通过id获取view等，getView()方法可以获取item中的任意view。
 ### Adapter写法
 ```java
 public class TestAdapter extends SimpleRecyclerAdapter<String> {
@@ -24,59 +24,43 @@ public class TestAdapter extends SimpleRecyclerAdapter<String> {
     }
 }
 ```
-### Activity中的recyclerView
-```java
-public class MainActivity extends AppCompatActivity {
-    private RecyclerView rvMain;
-    private TestAdapter testAdapter;
-    private ArrayList<String> list;
+### adapter与recyclerView  
+
+```  
+View header = View.inflate(this, R.layout.header_test, null);
+View footer = View.inflate(this, R.layout.footer_test, null);
+list = new ArrayList<>();
+mAdapter = new TestAdapter(list);
+mAdapter.bindRecyclerView(recyclerView, new LinearLayoutManager(this));
+mAdapter.addHeaderView(header);
+mAdapter.addFooterView(footer);
+// click
+mAdapter.setOnItemClickListener(new SimpleRecyclerAdapter.OnItemClickListener() {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        rvMain = findViewById(R.id.rvMain);
-        initRecycler();
-        initEvent();
-        loadData();
+    public void onClick(View v, int position) {
+        
     }
+});
 
-    private void initRecycler() {
-        list = new ArrayList<>();
-        rvMain.setLayoutManager(new LinearLayoutManager(this));
-        testAdapter = new TestAdapter(list);
-        // 绑定RecyclerView
-        testAdapter.bindRecyclerView(rvMain);
-        // 20190110更新：Adapter支持添加header和footer
-        View header = View.inflate(this, R.layout.header_test, null);
-        View footer = View.inflate(this, R.layout.footer_test, null);
-        testAdapter.addHeaderView(header);
-        testAdapter.addFooterView(footer);
+mAdapter.setOnSubViewClickListener(new SimpleRecyclerAdapter.OnSubViewClickListener() {
+    @Override
+    public void onClick(View v, int position) {
+        
     }
+});
 
-    private void initEvent() {
-        // item 设置点击监听
-        testAdapter.setOnItemClickListener(new SimpleRecyclerAdapter.OnItemClickListener() {
-            @Override
-            public void onClick(View v, int position) {
-                // item 点击监听回调
-                Toast.makeText(MainActivity.this, "item"+position, Toast.LENGTH_SHORT).show();
-            }
-        });
-        // 子项设置点击监听
-        testAdapter.setOnSubViewClickListener(new SimpleRecyclerAdapter.OnSubViewClickListener() {
-            @Override
-            public void onClick(View v, int position) {
-                // 子项点击监听回调
-                Toast.makeText(MainActivity.this, "sub item"+position, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+// long click
+mAdapter.setOnItemLongClickListener(new SimpleRecyclerAdapter.OnItemLongClickListener() {
+    @Override
+    public void onLongClick(View v, int position) {
 
-    private void loadData() {
-        for (int i = 0; i < 20; i++) {
-            list.add("文字是sub item "+i);
-        }
-        testAdapter.notifyDataSetChanged();
     }
-}
+});
+
+mAdapter.setOnSubViewLongClickListener(new SimpleRecyclerAdapter.OnSubViewLongClickListener() {
+    @Override
+    public void onLongClick(View v, int position) {
+
+    }
+});
 ```
