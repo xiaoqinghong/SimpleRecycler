@@ -26,7 +26,7 @@ public class TestAdapter extends SimpleRecyclerAdapter<String> {
 ```
 ### adapter与recyclerView  
 
-```  
+```java
 View header = View.inflate(this, R.layout.header_test, null);
 View footer = View.inflate(this, R.layout.footer_test, null);
 list = new ArrayList<>();
