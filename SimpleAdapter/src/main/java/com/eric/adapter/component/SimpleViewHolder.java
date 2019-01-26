@@ -1,9 +1,13 @@
-package com.eric.simple.component;
+package com.eric.adapter.component;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,8 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 final public class SimpleViewHolder extends RecyclerView.ViewHolder {
-    static final int KEY_TEM_POSITION = -1000;
     static final int KEY_IS_ITEM = -1001;
+    private boolean isHaveHeader = false; // 是否有header，若有，则计算位置的时候，需要减1
 
     private SimpleRecyclerAdapter.OnItemClickListener onItemClickListener;
     private SimpleRecyclerAdapter.OnItemLongClickListener onItemLongClickListener;
@@ -27,9 +31,16 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
     }
 
+    /**
+     * 设置是否含有header
+     */
+    public void setHaveHeader(boolean haveHeader) {
+        isHaveHeader = haveHeader;
+    }
+
     //============ 以下是绑定点击事件监听的回调接口 ============//
     /**
-     * bind item click. only inner adapter can call this method.
+     * item的点击事件回调接口
      * @param itemClickListener listener
      */
     void bindItemClickListener(SimpleRecyclerAdapter.OnItemClickListener itemClickListener) {
@@ -44,7 +55,7 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
-     * bind item long click. only inner adapter can call this method.
+     * item的长按事件回调接口
      * @param itemLongClickListener listener
      */
     void bindItemLongClickListener(SimpleRecyclerAdapter.OnItemLongClickListener itemLongClickListener){
@@ -59,7 +70,7 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
-     * bind subView click. only inner adapter can call this method.
+     * subView的点击事件的回调接口
      * @param subViewClickListener listener
      */
     void bindSubViewClickListener(SimpleRecyclerAdapter.OnSubViewClickListener subViewClickListener) {
@@ -68,24 +79,27 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
-     * bind subView long click. only inner adapter can call this method.
+     * subView的长按事件回调接口
      * @param subViewLongClickListener listener
      */
     void bindSubViewLongClickListener(SimpleRecyclerAdapter.OnSubViewLongClickListener subViewLongClickListener) {
-        this.onSubViewLongClickListener = subViewLongClickListener;
+        if (this.onSubViewLongClickListener == null)
+            this.onSubViewLongClickListener = subViewLongClickListener;
 
     }
 
     //============ 以下是两个点击事件监听的内部类 ============//
     /**
-     * click 内部监听
+     * 点击事件的内部监听，整个viewHolder中只有一个
      */
     private class InnerClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Integer position = (Integer) v.getTag(KEY_TEM_POSITION);
+            //Integer position = (Integer) v.getTag(KEY_TEM_POSITION);
+            int position = isHaveHeader? getLayoutPosition() - 1 : getLayoutPosition();
             Boolean isItemView = (Boolean)v.getTag(KEY_IS_ITEM);
-            if (position != null && isItemView != null) {
+            if (isItemView != null) {
+                // 分发item或是subView
                 if (isItemView) {
                     if (onItemClickListener!= null)
                         onItemClickListener.onClick(v, position);
@@ -98,14 +112,16 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
-     * longClick 内部监听
+     * 长按事件的内部监听，整个viewHolder中只有一个
      */
     private class InnerLongClickListener implements View.OnLongClickListener {
         @Override
         public boolean onLongClick(View v) {
-            Integer position = (Integer) v.getTag(KEY_TEM_POSITION);
+            // Integer position = (Integer) v.getTag(KEY_TEM_POSITION);
+            int position = isHaveHeader? getLayoutPosition() - 1 : getLayoutPosition();
             Boolean isItemView = (Boolean)v.getTag(KEY_IS_ITEM);
-            if (position != null && isItemView != null) {
+            if (isItemView != null) {
+                // 分发item或是subView
                 if (isItemView) {
                     if (onItemLongClickListener!= null)
                         onItemLongClickListener.onLongClick(v, position);
@@ -132,7 +148,7 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
                 mInnerClickListener = new InnerClickListener();
             }
             View subView = itemView.findViewById(id);
-            subView.setTag(KEY_TEM_POSITION, itemView.getTag(KEY_TEM_POSITION));
+            //subView.setTag(KEY_TEM_POSITION, itemView.getTag(KEY_TEM_POSITION));
             subView.setTag(KEY_IS_ITEM, false);
             subView.setOnClickListener(mInnerClickListener);
         }
@@ -151,7 +167,7 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
                 mInnerLongClickListener = new InnerLongClickListener();
             }
             View subView = itemView.findViewById(id);
-            subView.setTag(KEY_TEM_POSITION, itemView.getTag(KEY_TEM_POSITION));
+            //subView.setTag(KEY_TEM_POSITION, itemView.getTag(KEY_TEM_POSITION));
             subView.setTag(KEY_IS_ITEM, false);
             subView.setOnLongClickListener(mInnerLongClickListener);
         }
@@ -159,55 +175,77 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
-     * this method will call 'setText()' from TextView
+     * 设置textView的文字
      * @param id view id
      * @param text content
      * @return this
      */
-    public SimpleViewHolder setText(int id, String text) {
+    public SimpleViewHolder setText(@IdRes int id, CharSequence text) {
         if (!TextUtils.isEmpty(text)) {
-            ((TextView)itemView.findViewById(id)).setText(text);
+            ((TextView)getView(id)).setText(text);
         }
         return this;
     }
 
     /**
-     * set color for text
-     * @param id id
-     * @param colorId resId
+     * 设置textView的文字
+     * @param id view id
+     * @param resId content
      * @return this
      */
-    @SuppressLint("ResourceType")
-    public SimpleViewHolder setTextColor(int id, int colorId) {
-        TextView tv = (TextView) itemView.findViewById(id);
-        tv.setTextColor(ContextCompat.getColor(itemView.getContext(), colorId));
+    public SimpleViewHolder setText(@IdRes int id, @StringRes int resId) {
+        String str = itemView.getContext().getString(resId);
+        if (!TextUtils.isEmpty(str)) {
+            ((TextView)getView(id)).setText(str);
+        }
         return this;
     }
 
     /**
-     * this method will call 'setBackgroundResource()' from View
+     * 设置textView的颜色
+     * @param id id
+     * @param resId resId
+     * @return this
+     */
+    @SuppressLint("ResourceType")
+    public SimpleViewHolder setTextColor(@IdRes int id, @ColorRes int resId) {
+        TextView tv = getView(id);
+        tv.setTextColor(ContextCompat.getColor(itemView.getContext(), resId));
+        return this;
+    }
+
+    /**
+     * 设置view的背景res
      * @param id id
      * @param resId resourceId
      * @return this
      */
-    public SimpleViewHolder setBackgroundResource(int id, int resId) {
-        itemView.findViewById(id).setBackgroundResource(resId);
+    public SimpleViewHolder setBackgroundResource(@IdRes int id, @DrawableRes int resId) {
+        getView(id).setBackgroundResource(resId);
         return this;
     }
 
     /**
-     * 设置背景颜色
+     * 设置view的背景颜色
      */
-    public SimpleViewHolder setBackgroundColor(int id, int color) {
-        itemView.findViewById(id).setBackgroundColor(color);
+    public SimpleViewHolder setBackgroundColor(@IdRes int id, @ColorInt int color) {
+        getView(id).setBackgroundColor(color);
+        return this;
+    }
+
+    /**
+     * 设置view的背景颜色
+     */
+    public SimpleViewHolder setBackgroundColorRes(@IdRes int id, @ColorRes int resId) {
+        getView(id).setBackgroundColor(ContextCompat.getColor(itemView.getContext(), resId));
         return this;
     }
 
     /**
      * 设置imageView
      */
-    public SimpleViewHolder setImageResource(int id, int resId) {
-        ImageView imageView = (ImageView) itemView.findViewById(id);
+    public SimpleViewHolder setImageResource(@IdRes int id, int resId) {
+        ImageView imageView = getView(id);
         imageView.setImageResource(resId);
         return this;
     }
@@ -215,16 +253,18 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
     /**
      * 为imageView 设置bitmap
      */
-    public SimpleViewHolder setImageBitmap(int id, Bitmap bitmap) {
-        ImageView imageView = (ImageView) itemView.findViewById(id);
+    public SimpleViewHolder setImageBitmap(@IdRes int id, Bitmap bitmap) {
+        ImageView imageView = getView(id);
         imageView.setImageBitmap(bitmap);
         return this;
     }
 
     /**
-     * set gone
+     * 设置view的gone或visible
+     * isVisible == true:View.VISIBLE
+     * isVisible == false:View.GONE
      */
-    public SimpleViewHolder setGone(int id, boolean isVisible) {
+    public SimpleViewHolder setGone(@IdRes int id, boolean isVisible) {
         if (!isVisible) {
             itemView.findViewById(id).setVisibility(View.GONE);
         } else {
@@ -234,11 +274,13 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
-     * set visible
+     * 设置view的invisible或visible
+     * isVisible == true:View.VISIBLE
+     * isVisible == false:View.INVISIBLE
      */
-    public SimpleViewHolder setVisible(int id, boolean isVisible) {
-        if (isVisible) itemView.findViewById(id).setVisibility(View.VISIBLE);
-        else itemView.findViewById(id).setVisibility(View.INVISIBLE);
+    public SimpleViewHolder setVisible(@IdRes int id, boolean isVisible) {
+        if (isVisible) getView(id).setVisibility(View.VISIBLE);
+        else getView(id).setVisibility(View.INVISIBLE);
         return this;
     }
 
@@ -246,7 +288,6 @@ final public class SimpleViewHolder extends RecyclerView.ViewHolder {
      * findViewById
      */
     public <T extends View> T getView(@IdRes int id) {
-        View view = itemView.findViewById(id);
-        return (T) view;
+        return (T) itemView.findViewById(id);
     }
 }

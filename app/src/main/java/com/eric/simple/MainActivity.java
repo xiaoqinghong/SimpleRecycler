@@ -7,8 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
+import com.eric.adapter.component.SimpleRecyclerAdapter;
 import com.eric.simple.adapter.TestAdapter;
-import com.eric.simple.component.SimpleRecyclerAdapter;
 
 import java.util.ArrayList;
 
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initEvent() {
+        // click
         testAdapter.setOnItemClickListener(new SimpleRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onClick(View v, int position) {
@@ -49,6 +50,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v, int position) {
                 Toast.makeText(MainActivity.this, "sub item"+position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // long click
+        testAdapter.setOnItemLongClickListener(new SimpleRecyclerAdapter.OnItemLongClickListener() {
+            @Override
+            public void onLongClick(View v, int position) {
+
+            }
+        });
+
+        testAdapter.setOnSubViewLongClickListener(new SimpleRecyclerAdapter.OnSubViewLongClickListener() {
+            @Override
+            public void onLongClick(View v, int position) {
+
             }
         });
     }

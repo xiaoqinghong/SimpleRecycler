@@ -1,9 +1,8 @@
-package com.eric.simple.component;
+package com.eric.adapter.component;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,6 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
     @NonNull
     @Override
     public SimpleViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        context = viewGroup.getContext();
         View itemView;
         SimpleViewHolder simpleViewHolder;
         if (viewType == TYPE_HEADER) {
@@ -47,6 +45,7 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
             itemView = LayoutInflater.from(context).inflate(mLayoutId, viewGroup, false);
         }
         simpleViewHolder = new SimpleViewHolder(itemView);
+        simpleViewHolder.setHaveHeader(haveHeader());
         simpleViewHolder.bindItemClickListener(onItemClickListener);
         simpleViewHolder.bindSubViewClickListener(onSubViewClickListener);
         simpleViewHolder.bindItemLongClickListener(onItemLongClickListener);
@@ -58,7 +57,6 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
     public void onBindViewHolder(@NonNull SimpleViewHolder simpleViewHolder, int position) {
         if (!isHeader(position) && !isFooter(position)){
             if (haveHeader()) position --;
-            simpleViewHolder.itemView.setTag(SimpleViewHolder.KEY_TEM_POSITION, position);
             simpleViewHolder.itemView.setTag(SimpleViewHolder.KEY_IS_ITEM, true);
             bindData(simpleViewHolder, mData.get(position));
         }
@@ -115,8 +113,10 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
      * 绑定RecyclerView
      */
     public void bindRecyclerView(RecyclerView recyclerView) {
+        if (mRecyclerView != null) return;
         this.mRecyclerView = recyclerView;
         this.mRecyclerView.setAdapter(this);
+        this.context = mRecyclerView.getContext();
     }
 
     /**
@@ -124,8 +124,11 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
      * RecyclerView绑定layoutManager
      */
     public void bindRecyclerView(RecyclerView recyclerView, RecyclerView.LayoutManager layoutManager){
+        if (mRecyclerView != null) return;
         this.mRecyclerView = recyclerView;
         this.mRecyclerView.setLayoutManager(layoutManager);
+        this.mRecyclerView.setAdapter(this);
+        this.context = mRecyclerView.getContext();
     }
 
     /**
@@ -133,7 +136,6 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
      */
     public void addHeaderView(View view) {
         if (this.mHeaderView != null) return;
-        // 避免出现宽度自适应
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         this.mHeaderView = view;
         mHeaderView.setLayoutParams(params);
@@ -145,7 +147,6 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
      */
     public void addFooterView(View view) {
         if (this.mFooterView != null) return;
-        // 避免出现宽度自适应
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         this.mFooterView = view;
         mFooterView.setLayoutParams(params);
@@ -185,6 +186,7 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
         this.onSubViewLongClickListener = onSubViewLongClickListener;
     }
 
+    //================以下是事件监听的回调接口===================//
     /**
      * item click
      */
