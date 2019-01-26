@@ -1,19 +1,20 @@
 # SimpleRecycler
 apk：https://github.com/xiaoqinghong/SimpleRecycler/raw/master/app/release/app-release.apk  
 ### step：
+步骤1.将JitPack存储库添加到构建文件中  
 ```groovy
-步骤1.将JitPack存储库添加到构建文件中
 allprojects {
-		repositories {
-			maven { url 'https://jitpack.io' }
-		}
-	}
-
-步骤2.添加依赖项
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+```  
+步骤2.添加依赖项  
+```groovy
 dependencies {
-	        implementation 'com.github.xiaoqinghong:SimpleRecycler:0.0.1'
-	}
-```
+	implementation 'com.github.xiaoqinghong:SimpleRecycler:0.0.1'
+}
+```  
 ### Adapter写法
 ```java
 public class TestAdapter extends SimpleRecyclerAdapter<String> {
