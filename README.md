@@ -15,7 +15,7 @@ dependencies {
 	implementation 'com.github.xiaoqinghong:SimpleRecycler:0.0.1'
 }
 ```  
-### Adapter写法
+### SimpleAdapter（只支持一种itemView）
 ```java
 public class TestAdapter extends SimpleRecyclerAdapter<String> {
 
@@ -31,44 +31,83 @@ public class TestAdapter extends SimpleRecyclerAdapter<String> {
                 .getView(R.id.tv_test_item);
     }
 }
+```  
+### MultipleAdapter（支持多种itemView）  
+```java
+/**
+* bean类需要实现SimpleMultipleAdapter.TypeBind接口。每个bean类都可能属于不同的type
+*/
+public class MultipleBean implements SimpleMultipleAdapter.TypeBind {
+    @Override
+    public int type() {
+        return 0;
+    }
+}
+/**
+* 
+*/
+public class MultipleTestAdapter extends SimpleMultipleAdapter<MultipleBean> {
+    public MultipleTestAdapter(List<MultipleBean> list) {
+        super(list);
+        // 添加多种item对应的layout。
+        addLayout(R.layout.multiple_item_a, 0);
+        addLayout(R.layout.multiple_item_b, 1);
+        addLayout(R.layout.multiple_item_c, 2);
+    }
+
+    @Override
+    protected void multipleBind(SimpleViewHolder helper, MultipleBean item, int itemType) {
+        switch (itemType) {
+            case 0:
+                helper.setText(R.id.tvMultipleA, "this is type "+item.getName());
+                break;
+            case 1:
+                helper.setText(R.id.tvMultipleB, "this is type "+item.getName());
+                break;
+            case 2:
+                helper.setText(R.id.tvMultipleC, "this is type "+item.getName());
+                break;
+            default:
+                break;
+        }
+    }
+}
 ```
-### adapter与recyclerView  
+
+
+### adapter暴露的接口
 
 ```java
-View header = View.inflate(this, R.layout.header_test, null);
-View footer = View.inflate(this, R.layout.footer_test, null);
-list = new ArrayList<>();
-mAdapter = new TestAdapter(list);
-mAdapter.bindRecyclerView(recyclerView, new LinearLayoutManager(this));
-mAdapter.addHeaderView(header);
-mAdapter.addFooterView(footer);
-// click
-mAdapter.setOnItemClickListener(new SimpleRecyclerAdapter.OnItemClickListener() {
-    @Override
-    public void onClick(View v, int position) {
-        
-    }
-});
-
-mAdapter.setOnSubViewClickListener(new SimpleRecyclerAdapter.OnSubViewClickListener() {
-    @Override
-    public void onClick(View v, int position) {
-        
-    }
-});
-
-// long click
-mAdapter.setOnItemLongClickListener(new SimpleRecyclerAdapter.OnItemLongClickListener() {
-    @Override
-    public void onLongClick(View v, int position) {
-
-    }
-});
-
-mAdapter.setOnSubViewLongClickListener(new SimpleRecyclerAdapter.OnSubViewLongClickListener() {
-    @Override
-    public void onLongClick(View v, int position) {
-
-    }
-});
+mAdapter.bindRecyclerView(recyclerView); // 内部默认使用LinearLayoutManager
+    mAdapter.addHeaderView(header);
+    mAdapter.addFooterView(footer);
+    // click
+    mAdapter.setOnItemClickListener(new SimpleRecyclerAdapter.OnItemClickListener() {
+        @Override
+        public void onClick(View v, int position) {
+            
+        }
+    });
+    
+    mAdapter.setOnSubViewClickListener(new SimpleRecyclerAdapter.OnSubViewClickListener() {
+        @Override
+        public void onClick(View v, int position) {
+            
+        }
+    });
+    
+    // long click
+    mAdapter.setOnItemLongClickListener(new SimpleRecyclerAdapter.OnItemLongClickListener() {
+        @Override
+        public void onLongClick(View v, int position) {
+    
+        }
+    });
+    
+    mAdapter.setOnSubViewLongClickListener(new SimpleRecyclerAdapter.OnSubViewLongClickListener() {
+        @Override
+        public void onLongClick(View v, int position) {
+    
+        }
+    });
 ```
