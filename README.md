@@ -12,7 +12,7 @@ allprojects {
 步骤2.添加依赖项  
 ```groovy
 dependencies {
-	implementation 'com.github.xiaoqinghong:SimpleRecycler:0.0.1'
+	implementation 'com.github.xiaoqinghong:SimpleRecycler:0.0.2'
 }
 ```  
 ### SimpleAdapter（只支持一种itemView）
