@@ -13,7 +13,7 @@ public class TestAdapter extends SimpleRecyclerAdapter<String> {
     }
 
     @Override
-    protected void bindData(SimpleViewHolder helper, String item) {
+    protected void bind(SimpleViewHolder helper, String item) {
         helper.setText(R.id.tv_test_item, item)
                 .addClickListener(R.id.tv_test_item)
                 .addLongClickListener(R.id.tv_test_item)

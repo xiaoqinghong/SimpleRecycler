@@ -1,4 +1,4 @@
-package com.eric.adapter.ex;
+package com.eric.adapter.listener.ex;
 
 import android.view.View;
 
@@ -24,10 +24,10 @@ public abstract class OnNoDoubleClickListener implements View.OnClickListener {
     /**
      * 自定义时间间隔，单位毫秒
      */
-    abstract long timeSlot();
+    protected abstract long timeSlot();
 
     /**
      * 点击事件触发，并且满足时间间隔时的回调
      */
-    abstract void onNoDoubleCLick(View v);
+    protected abstract void onNoDoubleCLick(View v);
 }

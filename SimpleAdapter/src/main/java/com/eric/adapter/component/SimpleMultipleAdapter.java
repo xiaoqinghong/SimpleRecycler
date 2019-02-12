@@ -1,9 +1,12 @@
 package com.eric.adapter.component;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +18,15 @@ import com.eric.adapter.listener.OnSubViewLongClickListener;
 
 import java.util.List;
 
-public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<SimpleViewHolder> {
-
+/**
+ * Author: Eric
+ * Date: Created in 2019/2/12 11:26 AM
+ * Description： 多种itemView的Adapter
+ */
+public abstract class SimpleMultipleAdapter<T extends SimpleMultipleAdapter.TypeBind> extends RecyclerView.Adapter<SimpleViewHolder> {
     private List<T> mData;
-    private int mLayoutId;
+    @SuppressLint("UseSparseArrays")
+    private SparseArray<Integer> mLayouts = new SparseArray<>();
     private View mHeaderView;
     private View mFooterView;
     private RecyclerView mRecyclerView;
@@ -27,15 +35,20 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
     private OnItemLongClickListener onItemLongClickListener;
     private OnSubViewClickListener onSubViewClickListener;
     private OnSubViewLongClickListener onSubViewLongClickListener;
-
-    //Type
-    private static int TYPE_NORMAL = 1000;
     private static int TYPE_HEADER = 1001;
     private static int TYPE_FOOTER = 1002;
 
-    public SimpleRecyclerAdapter(int layout, List<T> list) {
-        this.mLayoutId = layout;
+    public SimpleMultipleAdapter(List<T> list) {
         this.mData = list;
+    }
+
+    /**
+     * 添加多种item的layout，并传入对应的type
+     * type作为K，layout作为V
+     * 在构造方法处调用，可以多次调用
+     */
+    public void addLayout(@LayoutRes int resId, int type) {
+        mLayouts.put(type, resId);
     }
 
     @NonNull
@@ -48,10 +61,10 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
         } else if (viewType == TYPE_FOOTER) {
             itemView = mFooterView;
         } else {
-            itemView = LayoutInflater.from(context).inflate(mLayoutId, viewGroup, false);
+            itemView = LayoutInflater.from(context).inflate(mLayouts.get(viewType), viewGroup, false);
         }
         simpleViewHolder = new SimpleViewHolder(itemView);
-        if (viewType == TYPE_NORMAL) {
+        if (viewType != TYPE_HEADER && viewType != TYPE_FOOTER) {
             simpleViewHolder.setHaveHeader(haveHeader());
             simpleViewHolder.bindItemClickListener(onItemClickListener);
             simpleViewHolder.bindSubViewClickListener(onSubViewClickListener);
@@ -66,9 +79,11 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
         if (!isHeader(position) && !isFooter(position)){
             if (haveHeader()) position --;
             simpleViewHolder.itemView.setTag(SimpleViewHolder.KEY_IS_ITEM, true);
-            bind(simpleViewHolder, mData.get(position));
+            multipleBind(simpleViewHolder, mData.get(position), mData.get(position).type());
         }
     }
+
+    abstract protected void multipleBind(SimpleViewHolder helper, T item, int itemType);
 
     @Override
     public int getItemCount() {
@@ -86,7 +101,8 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
         if (isFooter(position)) {
             return TYPE_FOOTER;
         }
-        return TYPE_NORMAL;
+        if (haveHeader()) position--;
+        return mData.get(position).type();
     }
 
     private boolean haveHeader() {
@@ -106,17 +122,13 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
     }
 
     /**
-     * 子类需要实现的抽象方法，用于装填数据
+     * bean类区分类型的接口
      */
-    protected abstract void bind(SimpleViewHolder helper, T item);
-
-    /**
-     * 获取Context
-     */
-    public Context getContext() {
-        return context;
+    public interface TypeBind {
+        int type();
     }
 
+    //================ 以下是外部调用 ==============//
     /**
      * 绑定RecyclerView，默认LinearLayoutManager
      */
@@ -135,7 +147,7 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
      * RecyclerView绑定layoutManager
      */
     public void bindRecyclerView(RecyclerView recyclerView, RecyclerView.LayoutManager layoutManager){
-        if (mRecyclerView != null) return;
+        if (this.mRecyclerView != null) return;
         this.mRecyclerView = recyclerView;
         this.mRecyclerView.setLayoutManager(layoutManager);
         this.mRecyclerView.setAdapter(this);
@@ -162,8 +174,6 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
         this.mFooterView = view;
         mFooterView.setLayoutParams(params);
     }
-
-    //================以下是属性设置======================//
 
     /**
      * 设置item的点击事件监听
@@ -195,5 +205,12 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
     public void setOnSubViewLongClickListener(OnSubViewLongClickListener onSubViewLongClickListener) {
         if (this.onSubViewLongClickListener != null) return;
         this.onSubViewLongClickListener = onSubViewLongClickListener;
+    }
+
+    /**
+     * 在adapter里面调用
+     */
+    public Context getContext() {
+        return context;
     }
 }
