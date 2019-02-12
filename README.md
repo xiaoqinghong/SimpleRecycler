@@ -44,7 +44,7 @@ public class MultipleBean implements SimpleMultipleAdapter.TypeBind {
     }
 }
 /**
-* 
+* MultipleTestAdapter
 */
 public class MultipleTestAdapter extends SimpleMultipleAdapter<MultipleBean> {
     public MultipleTestAdapter(List<MultipleBean> list) {
@@ -79,35 +79,35 @@ public class MultipleTestAdapter extends SimpleMultipleAdapter<MultipleBean> {
 
 ```java
 mAdapter.bindRecyclerView(recyclerView); // 内部默认使用LinearLayoutManager
-    mAdapter.addHeaderView(header);
-    mAdapter.addFooterView(footer);
-    // click
-    mAdapter.setOnItemClickListener(new SimpleRecyclerAdapter.OnItemClickListener() {
-        @Override
-        public void onClick(View v, int position) {
-            
-        }
-    });
-    
-    mAdapter.setOnSubViewClickListener(new SimpleRecyclerAdapter.OnSubViewClickListener() {
-        @Override
-        public void onClick(View v, int position) {
-            
-        }
-    });
-    
-    // long click
-    mAdapter.setOnItemLongClickListener(new SimpleRecyclerAdapter.OnItemLongClickListener() {
-        @Override
-        public void onLongClick(View v, int position) {
-    
-        }
-    });
-    
-    mAdapter.setOnSubViewLongClickListener(new SimpleRecyclerAdapter.OnSubViewLongClickListener() {
-        @Override
-        public void onLongClick(View v, int position) {
-    
-        }
-    });
+mAdapter.addHeaderView(header);
+mAdapter.addFooterView(footer);
+// click
+mAdapter.setOnItemClickListener(new SimpleRecyclerAdapter.OnItemClickListener() {
+    @Override
+    public void onClick(View v, int position) {
+        
+    }
+});
+
+mAdapter.setOnSubViewClickListener(new SimpleRecyclerAdapter.OnSubViewClickListener() {
+    @Override
+    public void onClick(View v, int position) {
+        
+    }
+});
+
+// long click
+mAdapter.setOnItemLongClickListener(new SimpleRecyclerAdapter.OnItemLongClickListener() {
+    @Override
+    public void onLongClick(View v, int position) {
+
+    }
+});
+
+mAdapter.setOnSubViewLongClickListener(new SimpleRecyclerAdapter.OnSubViewLongClickListener() {
+    @Override
+    public void onLongClick(View v, int position) {
+
+    }
+});
 ```
