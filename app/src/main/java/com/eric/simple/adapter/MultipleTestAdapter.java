@@ -12,24 +12,25 @@ import java.util.List;
  * Description： SimpleMultipleAdapter例子
  */
 public class MultipleTestAdapter extends SimpleMultipleAdapter<MultipleBean> {
+
     public MultipleTestAdapter(List<MultipleBean> list) {
         super(list);
-        addLayout(R.layout.multiple_item_a, 0);
-        addLayout(R.layout.multiple_item_b, 1);
-        addLayout(R.layout.multiple_item_c, 2);
+        addLayout(0, R.layout.multiple_item_a);
+        addLayout(1, R.layout.multiple_item_b);
+        addLayout(2, R.layout.multiple_item_c);
     }
 
     @Override
-    protected void multipleBind(SimpleViewHolder helper, MultipleBean item, int itemType) {
-        switch (itemType) {
+    protected void bind(SimpleViewHolder helper, MultipleBean item) {
+        switch (item.type()) {
             case 0:
-                helper.setText(R.id.tvMultipleA, "this is type "+item.getName());
+                helper.setText(R.id.tvMultipleA, "this is type " + item.getName());
                 break;
             case 1:
-                helper.setText(R.id.tvMultipleB, "this is type "+item.getName());
+                helper.setText(R.id.tvMultipleB, "this is type " + item.getName());
                 break;
             case 2:
-                helper.setText(R.id.tvMultipleC, "this is type "+item.getName());
+                helper.setText(R.id.tvMultipleC, "this is type " + item.getName());
                 break;
             default:
                 break;

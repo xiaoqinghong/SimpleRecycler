@@ -17,21 +17,21 @@ import java.util.List;
 
 public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<SimpleViewHolder> {
 
-    private List<T> mData;
+    List<T> mData;
     private int mLayoutId;
-    private View mHeaderView;
-    private View mFooterView;
-    private RecyclerView mRecyclerView;
-    private Context context;
-    private OnItemClickListener onItemClickListener;
-    private OnItemLongClickListener onItemLongClickListener;
-    private OnSubViewClickListener onSubViewClickListener;
-    private OnSubViewLongClickListener onSubViewLongClickListener;
+    View mHeaderView;
+    View mFooterView;
+    RecyclerView mRecyclerView;
+    Context context;
+    OnItemClickListener onItemClickListener;
+    OnItemLongClickListener onItemLongClickListener;
+    OnSubViewClickListener onSubViewClickListener;
+    OnSubViewLongClickListener onSubViewLongClickListener;
 
     //Type
-    private static int TYPE_NORMAL = 1000;
-    private static int TYPE_HEADER = 1001;
-    private static int TYPE_FOOTER = 1002;
+    static int TYPE_NORMAL = 1000;
+    static int TYPE_HEADER = 1001;
+    static int TYPE_FOOTER = 1002;
 
     public SimpleRecyclerAdapter(int layout, List<T> list) {
         this.mLayoutId = layout;
@@ -63,8 +63,8 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
 
     @Override
     public void onBindViewHolder(@NonNull SimpleViewHolder simpleViewHolder, int position) {
-        if (!isHeader(position) && !isFooter(position)){
-            if (haveHeader()) position --;
+        if (!isHeader(position) && !isFooter(position)) {
+            if (haveHeader()) position--;
             simpleViewHolder.itemView.setTag(SimpleViewHolder.KEY_IS_ITEM, true);
             bind(simpleViewHolder, mData.get(position));
         }
@@ -72,9 +72,9 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
 
     @Override
     public int getItemCount() {
-        int count = mData != null? mData.size() : 0;
-        if (mHeaderView != null) count ++;
-        if (mFooterView != null) count ++;
+        int count = mData != null ? mData.size() : 0;
+        if (mHeaderView != null) count++;
+        if (mFooterView != null) count++;
         return count;
     }
 
@@ -89,19 +89,19 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
         return TYPE_NORMAL;
     }
 
-    private boolean haveHeader() {
+    boolean haveHeader() {
         return mHeaderView != null;
     }
 
-    private boolean haveFooter() {
+    boolean haveFooter() {
         return mFooterView != null;
     }
 
-    private boolean isHeader(int position) {
+    boolean isHeader(int position) {
         return haveHeader() && position == 0;
     }
 
-    private boolean isFooter(int position) {
+    boolean isFooter(int position) {
         return haveFooter() && position == getItemCount() - 1;
     }
 
@@ -123,7 +123,7 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
     public void bindRecyclerView(RecyclerView recyclerView) {
         if (this.mRecyclerView != null) return;
         this.mRecyclerView = recyclerView;
-        if (mRecyclerView.getLayoutManager() == null){
+        if (mRecyclerView.getLayoutManager() == null) {
             this.mRecyclerView.setLayoutManager(new LinearLayoutManager(mRecyclerView.getContext()));
         }
         this.mRecyclerView.setAdapter(this);
@@ -134,7 +134,7 @@ public abstract class SimpleRecyclerAdapter<T> extends RecyclerView.Adapter<Simp
      * 绑定RecyclerView
      * RecyclerView绑定layoutManager
      */
-    public void bindRecyclerView(RecyclerView recyclerView, RecyclerView.LayoutManager layoutManager){
+    public void bindRecyclerView(RecyclerView recyclerView, RecyclerView.LayoutManager layoutManager) {
         if (mRecyclerView != null) return;
         this.mRecyclerView = recyclerView;
         this.mRecyclerView.setLayoutManager(layoutManager);

@@ -12,7 +12,6 @@ import com.eric.adapter.listener.OnItemClickListener;
 import com.eric.adapter.listener.OnItemLongClickListener;
 import com.eric.adapter.listener.OnSubViewClickListener;
 import com.eric.adapter.listener.OnSubViewLongClickListener;
-import com.eric.adapter.listener.ex.OnNoDoubleClickListener;
 import com.eric.simple.adapter.TestAdapter;
 
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ public class SingleTypeAdapterActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TestAdapter mAdapter;
     private ArrayList<String> list;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +42,7 @@ public class SingleTypeAdapterActivity extends AppCompatActivity {
         header.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(
-                        SingleTypeAdapterActivity.this, MultipleTypeActivity.class));
+                startActivity(new Intent(SingleTypeAdapterActivity.this, MultipleTypeActivity.class));
             }
         });
     }
@@ -53,7 +52,7 @@ public class SingleTypeAdapterActivity extends AppCompatActivity {
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onClick(View v, int position) {
-                Toast.makeText(SingleTypeAdapterActivity.this, "item"+position,
+                Toast.makeText(SingleTypeAdapterActivity.this, "item" + position,
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -61,7 +60,7 @@ public class SingleTypeAdapterActivity extends AppCompatActivity {
         mAdapter.setOnSubViewClickListener(new OnSubViewClickListener() {
             @Override
             public void onClick(View v, int position) {
-                Toast.makeText(SingleTypeAdapterActivity.this, "sub item"+position,
+                Toast.makeText(SingleTypeAdapterActivity.this, "sub item" + position,
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -84,7 +83,7 @@ public class SingleTypeAdapterActivity extends AppCompatActivity {
 
     private void loadData() {
         for (int i = 0; i < 20; i++) {
-            list.add("点击文字是sub item "+i);
+            list.add("点击文字是sub item " + i);
         }
         mAdapter.notifyDataSetChanged();
     }
