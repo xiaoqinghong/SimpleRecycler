@@ -1,20 +1,6 @@
 # SimpleRecycler
-apk：https://github.com/xiaoqinghong/SimpleRecycler/raw/master/app/release/app-release.apk  
-### step：
-步骤1.将JitPack存储库添加到构建文件中  
-```groovy
-allprojects {
-    repositories {
-        maven { url 'https://jitpack.io' }
-    }
-}
-```  
-步骤2.添加依赖项  
-```groovy
-dependencies {
-	implementation 'com.github.xiaoqinghong:SimpleRecycler:0.0.2'
-}
-```  
+apk：https://github.com/xiaoqinghong/SimpleRecycler/raw/master/app/release/app-release.apk
+
 ### SimpleAdapter（只支持一种itemView）
 ```java
 public class TestAdapter extends SimpleRecyclerAdapter<String> {
@@ -50,30 +36,30 @@ public class MultipleTestAdapter extends SimpleMultipleAdapter<MultipleBean> {
     public MultipleTestAdapter(List<MultipleBean> list) {
         super(list);
         // 添加多种item对应的layout。
-        addLayout(R.layout.multiple_item_a, 0);
-        addLayout(R.layout.multiple_item_b, 1);
-        addLayout(R.layout.multiple_item_c, 2);
+        addLayout(0, R.layout.multiple_item_a);
+        addLayout(1, R.layout.multiple_item_b);
+        addLayout(2, R.layout.multiple_item_c);
     }
 
     @Override
-    protected void multipleBind(SimpleViewHolder helper, MultipleBean item, int itemType) {
+    protected void bind(SimpleViewHolder helper, MultipleBean item) {
         switch (itemType) {
             case 0:
-                helper.setText(R.id.tvMultipleA, "this is type "+item.getName());
+                // doSomething...
                 break;
             case 1:
-                helper.setText(R.id.tvMultipleB, "this is type "+item.getName());
+                // doSomething...
                 break;
             case 2:
-                helper.setText(R.id.tvMultipleC, "this is type "+item.getName());
+               // doSomething...
                 break;
             default:
+                // doSomething...
                 break;
         }
     }
 }
 ```
-
 
 ### adapter暴露的接口
 
@@ -82,35 +68,35 @@ mAdapter.bindRecyclerView(recyclerView); // 内部默认使用LinearLayoutManage
 mAdapter.addHeaderView(header);
 mAdapter.addFooterView(footer);
 // click
-mAdapter.setOnItemClickListener(new SimpleRecyclerAdapter.OnItemClickListener() {
-    @Override
-    public void onClick(View v, int position) {
-        
-    }
-});
+mAdapter.setOnItemClickListener();
 
-mAdapter.setOnSubViewClickListener(new SimpleRecyclerAdapter.OnSubViewClickListener() {
-    @Override
-    public void onClick(View v, int position) {
-        
-    }
-});
+mAdapter.setOnSubViewClickListener();
 
 // long click
-mAdapter.setOnItemLongClickListener(new SimpleRecyclerAdapter.OnItemLongClickListener() {
-    @Override
-    public void onLongClick(View v, int position) {
+mAdapter.setOnItemLongClickListener();
 
-    }
-});
+mAdapter.setOnSubViewLongClickListener();
 
-mAdapter.setOnSubViewLongClickListener(new SimpleRecyclerAdapter.OnSubViewLongClickListener() {
-    @Override
-    public void onLongClick(View v, int position) {
-
-    }
-});
 ```
+### 使用方式1：
+下载工程源码，并将SimpleAdapter模块作为model导入到工程中
+
+### 使用方式2：
+步骤1.将JitPack存储库添加到构建文件中
+```groovy
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+步骤2.添加依赖项
+```groovy
+dependencies {
+	implementation 'com.github.xiaoqinghong:SimpleRecycler:last-version'
+}
+```
+
 ### LICENSE
 ```
 Copyright (c) 2018-present, SimpleRecycler Contributors.
