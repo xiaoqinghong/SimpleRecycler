@@ -29,6 +29,8 @@ public class MultipleBean implements SimpleMultipleAdapter.TypeBind {
         return 0;
     }
 }
+```
+```
 /**
 * MultipleTestAdapter
 */
