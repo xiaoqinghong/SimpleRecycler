@@ -1,6 +1,7 @@
 # SimpleRecycler
+### Example
+<iframe src="./img/example.gif">
 apk：https://github.com/xiaoqinghong/SimpleRecycler/raw/master/app/release/app-release.apk
-
 ### SimpleAdapter（只支持一种itemView）
 ```java
 public class TestAdapter extends SimpleRecyclerAdapter<String> {
